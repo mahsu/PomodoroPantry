@@ -1,3 +1,4 @@
+<script src="/js/main.js"></script>
 <div class="row">
     <div class="col-md-offset-3 col-md-6">
         <ul id="tabcontainer" class="nav nav-tabs">
@@ -20,6 +21,7 @@
                 </div>
                 <div class="row">
                     <h2>Add a task</h2>
+
                     <form class="form-inline" role="form">
                         <div class="form-group">
                             <label class="sr-only" for="taskname">Task</label>
@@ -27,20 +29,30 @@
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="numberpomodoros">Estimated Pomodoros</label>
-                            <input type="text" class="form-control" id="numberpomodoros" placeholder="Estimated Pomodoros">
+                            <input type="text" class="form-control" id="numberpomodoros"
+                                   placeholder="Estimated Pomodoros">
                         </div>
                         <button type="submit" class="btn btn-default">Create Task</button>
                     </form>
                 </div>
             </div>
             <div class="tab-pane fade" id="timer">
-                <div>Current Task:<span id="task">None</span></div>
-                <div><span id="counter">0</span> Pomodoros elapsed.</div>
-
-                <div class="col-md-offset-4 col-md-4">
-                    <div id="pomodoro"></div>
+                <div class="row">
+                    <div>Current Task:<span id="task">None</span></div>
+                    <div><span id="counter">0</span> Pomodoros elapsed.</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-4 col-md-4">
+                        <div id="pomodoro-timer"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container">
                     <button type="button" id="start-pomodoro" class="btn btn-success">Start Pomodoro</button>
+                    <button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button>
+                    <button type="button" id="task-complete" class="btn btn-primary">Mark Task as Complete</button>
                     <div id="next"></div>
+                    </div>
                 </div>
             </div>
             <div class="tab-pane fade" id="dropdown1">
