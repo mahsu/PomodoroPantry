@@ -4,6 +4,7 @@ settings =
   longbreak: 30 #length of a long break
   break: false #whether on break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
+  taskcount: 0 #current number of tasks
 
 currentpomodoro =
   taskname: ""
@@ -14,6 +15,7 @@ currentpomodoro =
 savedata = []
 
 $(document).ready(()->
+  #timer stuff
   $("#pomodoro-timer").countdown({compact: true, format: 'HMS', description: '', onExpiry: advancePomodoro});
 
   $("#start-pomodoro").click( ()->
@@ -22,6 +24,19 @@ $(document).ready(()->
     $("#pomodoro-timer").countdown('option',{until: time});
     settings.state = 1;
     $(this).unbind();
+    $("#start-pomodoro").remove();
+    $("#timer-controls").html('<button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button><button type="button" id="task-complete" class="btn btn-primary">Mark Task as Complete</button>')
+  )
+
+#pantry stuff
+  $("#create-task").click( ()->
+    console.log("click")
+    taskname = $("#taskname").val()
+    estimated = $("#numberpomodoros").val()
+    $("#pantry-table").append('<tr id="'+settings.taskcount+'"><td>'+ taskname+'</td><td>'+estimated+'</td><td class="count-actual"></td><td><button type="button" id="'+settings.taskcount+'" class="start btn btn-success">Start</button><button type="button" id="'+settings.taskcount+'" class="edit btn btn-warning">Edit</button><button type="button" id="'+settings.taskcount+'" class="delete btn btn-danger">Delete</button></td></tr>')
+    settings.taskcount+=1
+    $("#taskname").val("");
+    $("#numberpomodoros").val("");
   )
 )
 
@@ -40,4 +55,12 @@ advancePomodoro = () ->
         addTime = settings.longbreak
     else
       addTime = settings.pomo
+      #update pomodoros elapsed counter
+      currentpomodoro.elapsed +=1
+      $("#elapsed").text(currentpomodoro.elapsed)
     $("#pomodoro-timer").countdown('option',{until: time});
+
+#pantry manager
+loadPantry = () ->
+  poop = 1
+

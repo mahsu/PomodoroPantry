@@ -32,25 +32,25 @@
                             <input type="text" class="form-control" id="numberpomodoros"
                                    placeholder="Estimated Pomodoros">
                         </div>
-                        <button type="submit" class="btn btn-default">Create Task</button>
+                        <button type="button" id="create-task" class="btn btn-default">Create Task</button>
                     </form>
+                    <span>Keep in mind when estimating the number of required pomodoros that each is 25 minutes in length.</span>
                 </div>
             </div>
             <div class="tab-pane fade" id="timer">
                 <div class="row">
                     <div>Current Task:<span id="task">None</span></div>
-                    <div><span id="counter">0</span> Pomodoros elapsed.</div>
+                    <div><span id="elapsed">0</span> Pomodoros elapsed.</div>
                 </div>
                 <div class="row">
                     <div class="col-md-offset-4 col-md-4">
-                        <div id="pomodoro-timer"></div>
+                        <div style="" id="pomodoro-timer"></div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="container">
+                    <div id="timer-controls">
                     <button type="button" id="start-pomodoro" class="btn btn-success">Start Pomodoro</button>
-                    <button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button>
-                    <button type="button" id="task-complete" class="btn btn-primary">Mark Task as Complete</button>
+
                     <div id="next"></div>
                     </div>
                 </div>
