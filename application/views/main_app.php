@@ -34,7 +34,7 @@
                         </div>
                         <button type="button" id="create-task" class="btn btn-default">Create Task</button>
                     </form>
-                    <span>Keep in mind when estimating the number of required pomodoros that each is 25 minutes in length.</span>
+                    <span>Keep in mind that each pomodoro is 25 minutes in length.</span>
                 </div>
             </div>
             <div class="tab-pane fade" id="timer">

@@ -48,16 +48,20 @@ advancePomodoro = () ->
   if state = 8 #end of a pomodoro cycle
     state=0
   else
-    if state % 2 == 1 #next state is break
+    if state % 2 == 1 #next state is break, pomodoro just finished
+      currentpomodoro.elapsed +=1
+      $("#elapsed").text(currentpomodoro.elapsed)
+      $.playsound("/sound/timer-alarm.mp3")
       if state != 7 #not a long break
         addTime = settings.shortbreak
       else
         addTime = settings.longbreak
     else
+      $.playsound("/sound/break-alarm.mp3")
       addTime = settings.pomo
       #update pomodoros elapsed counter
-      currentpomodoro.elapsed +=1
-      $("#elapsed").text(currentpomodoro.elapsed)
+
+    settings.state+=1
     $("#pomodoro-timer").countdown('option',{until: time});
 
 #pantry manager
