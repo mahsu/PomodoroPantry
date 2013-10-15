@@ -31,18 +31,17 @@
                             <label class="sr-only" for="taskname">Task</label>
                             <input type="text" class="form-control" id="taskname" placeholder="Task Name">
                         </div>
+                        &nbsp;&nbsp;
                         <div class="form-group">
-                            <label class="sr-only" for="numberpomodoros">Estimated Pomodoros</label>
-                            <input type="text" class="form-control" id="numberpomodoros"
-                                   placeholder="Estimated Pomodoros">
-                            <form action="">
-                                <select name="cars">
-                                    <option value="volvo">Volvo</option>
-                                    <option value="saab">Saab</option>
-                                    <option value="fiat">Fiat</option>
-                                    <option value="audi">Audi</option>
-                                </select>
-                            </form>
+                            <label for="numberpomodoros">Estimated Pomodoros</label>
+                        </div>
+                        <div class="form-group">
+                            <select id="numberpomodoros" class="form-control">
+                                <?php
+                                for($i=1;$i<=15;$i++)
+                                    echo '<option>'.$i.'</option>';
+                                ?>
+                            </select>
                         </div>
                         <button type="button" id="create-task" class="btn btn-default">Add Task</button>
                     </form>
