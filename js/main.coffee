@@ -29,7 +29,7 @@ initializeTimer = () -> #timer stuff
   _resetTimer()
   bindTimerControls()
 
-
+#bind the start, stop, complete buttons
 bindTimerControls = () ->
   #button definitions
   startButton ='<button type="button" id="start-pomodoro" class="btn btn-success">Start Pomodoro</button>'
@@ -55,13 +55,27 @@ bindTimerControls = () ->
   #bind stop button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#stop-pomodoro', ()->
     if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
-
       settings.state = 0; #timer is not active
       _resetTimer() #reset the timer
       $("#timer-controls").html(startButton)
   )
 
-advancePomodoro = () -> #advance the pomodoro timer to the next state
+  #bind task complete button to parent and make it non-instance exclusive
+  $("#timer-controls").on('click','#task-complete', ()->
+    if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
+      settings.state = 0; #timer is not active
+      completTask(current.taskid,current.elapsed)
+      #reset the current task variable
+      current.elapsed=0;
+      current.taskid=0;
+      current.taskname = ""
+      current.estimated=0;
+      _resetTimer() #reset the timer
+      $("#timer-controls").html(startButton)
+  )
+
+#advance the pomodoro timer to the next state
+advancePomodoro = () ->
   state = settings.state
   time = new Date();
   addTime = 0; #time to be added
@@ -71,7 +85,7 @@ advancePomodoro = () -> #advance the pomodoro timer to the next state
     $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
-      currentpomodoro.elapsed +=1
+      current.elapsed +=1 #update pomodoros elapsed counter
       $("#elapsed").text(currentpomodoro.elapsed)
       $.playSound("/sound/timer-alarm.mp3")
       $("#pomodoro-timer").css('background-color','#2ecc71') #change timer background to green
@@ -83,7 +97,6 @@ advancePomodoro = () -> #advance the pomodoro timer to the next state
       $.playSound("/sound/break-alarm.mp3")
       addTime = settings.pomo
       $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to red
-      #update pomodoros elapsed counter
 
     settings.state+=1
     time.setMinutes(time.getMinutes() + addTime);
@@ -92,6 +105,14 @@ advancePomodoro = () -> #advance the pomodoro timer to the next state
 #add new task to save data array
 #newTask = () ->
 
+#update completed task
+completeTask = (taskid,actual) ->
+  #insert ajax updating here
+  sel = $("#pantry-table tr#"+taskid)
+  sel.children("td.count-actual").html(actual)
+  estimated=parseInt(sel.children("td.estimated").html())
+  sel.children("td.efficiency").html(Math.round(estimated/actual*100)+"%")
+  sel.find("td.actions .start").remove(); #remove the start button
 
 #pantry manager
 loadPantry = () ->
@@ -102,26 +123,27 @@ bindPantry = () ->
   $("#create-task").click( ()-> #stuff to do when create task button is pressed
     taskname = $("#taskname").val()
     estimated = $("#numberpomodoros").val()
-    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td class="taskname">'+ taskname+'</td><td class="estimated">'+estimated+'</td><td class="count-actual"></td><td class="efficiency"></td><td class="actions"><button type="button" id="'+settings.taskcount+'" class="start btn btn-success">Start</button><button type="button" id="'+settings.taskcount+'" class="edit btn btn-warning">Edit</button><button type="button" id="'+settings.taskcount+'" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
+    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td class="taskname">'+ taskname+'</td><td class="estimated">'+estimated+'</td><td class="count-actual"></td><td class="efficiency"></td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
     settings.taskcount+=1;
     $("#taskname").val("");
     $("#numberpomodoros").val("");
   )
 
-  $("#pantry-table").on('click','.start', ()-> #start task button is pressed
+  #start task button is pressed
+  $("#pantry-table").on('click','.start', ()->
     current.taskid = $(this).parents("tr.task").attr("id");
     current.taskname = $(this).parent().siblings(".taskname").html();
     console.log current.taskname
     $('#main-tab-container a[href="#timer"]').tab('show');
-
-
   )
 
-  $("#pantry-table").on('click','.edit', ()-> #edit task button is pressed
-    $(this).parents("tr.task").remove();
+  #edit task button is pressed
+  $("#pantry-table").on('click','.edit', ()->
+    #$(this).parents("tr.task").remove();
   )
 
-  $("#pantry-table").on('click','.delete', ()-> #delete task button is pressed
+  #delete task button is pressed
+  $("#pantry-table").on('click','.delete', ()->
     $(this).parents("tr.task").remove();
   )
 
