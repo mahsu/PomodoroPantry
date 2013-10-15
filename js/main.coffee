@@ -16,6 +16,14 @@ savedata = []
 
 $(document).ready(()->
   #timer stuff
+
+
+  bindPantry() #bind event listeners to the pantry buttons
+  #pantry stuff
+
+)
+
+initializeTimer = () -> #timer stuff
   $("#pomodoro-timer").countdown({compact: true, format: 'HMS', description: '', onExpiry: advancePomodoro});
 
   $("#start-pomodoro").click( ()->
@@ -27,35 +35,32 @@ $(document).ready(()->
     $("#start-pomodoro").remove();
     $("#timer-controls").html('<button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button><button type="button" id="task-complete" class="btn btn-primary">Mark Task as Complete</button>')
   )
-
-  bindPantry() #bind event listeners to the pantry buttons
-  #pantry stuff
-
-)
-
-advancePomodoro = () ->
+  
+advancePomodoro = () -> #advance the pomodoro timer to the next state
   state = settings.state
   time = new Date();
   addTime = 0; #time to be added
 
-  if state = 8 #end of a pomodoro cycle
+  if state == 8 #end of a pomodoro cycle
     state=0
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
       currentpomodoro.elapsed +=1
       $("#elapsed").text(currentpomodoro.elapsed)
-      $.playsound("/sound/timer-alarm.mp3")
+      $.playSound("/sound/timer-alarm.mp3")
       if state != 7 #not a long break
         addTime = settings.shortbreak
       else
         addTime = settings.longbreak
     else
-      $.playsound("/sound/break-alarm.mp3")
+      $.playSound("/sound/break-alarm.mp3")
       addTime = settings.pomo
       #update pomodoros elapsed counter
 
     settings.state+=1
+    time.setMinutes(time.getMinutes() + addTime);
     $("#pomodoro-timer").countdown('option',{until: time});
+
 
 #pantry manager
 loadPantry = () ->
@@ -84,5 +89,6 @@ bindPantry = () ->
     $(this).parents("tr.task").remove();
   )
 
-PromptYesNo(text) ->
+###PromptYesNo(text) ->
   #creates a yes/no modal prompt
+###
