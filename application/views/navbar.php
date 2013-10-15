@@ -9,7 +9,7 @@
 
     <div class="navbar-collapse collapse" style="overflow: hidden;">
         <ul class="nav navbar-nav navbar-left">
-            <li><a class="navbar-brand" href="/"><img id="title-icon" src="../img/app-icon.png" height="45px" width="45px" /><span id="title">HTHS Secret Santa</span></a></li>
+            <li><a class="navbar-brand" href="/"><span id="title">HTHS Secret Santa</span></a></li>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
         </ul>

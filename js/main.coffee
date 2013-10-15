@@ -28,16 +28,9 @@ $(document).ready(()->
     $("#timer-controls").html('<button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button><button type="button" id="task-complete" class="btn btn-primary">Mark Task as Complete</button>')
   )
 
-#pantry stuff
-  $("#create-task").click( ()->
-    console.log("click")
-    taskname = $("#taskname").val()
-    estimated = $("#numberpomodoros").val()
-    $("#pantry-table").append('<tr id="'+settings.taskcount+'"><td>'+ taskname+'</td><td>'+estimated+'</td><td class="count-actual"></td><td><button type="button" id="'+settings.taskcount+'" class="start btn btn-success">Start</button><button type="button" id="'+settings.taskcount+'" class="edit btn btn-warning">Edit</button><button type="button" id="'+settings.taskcount+'" class="delete btn btn-danger">Delete</button></td></tr>')
-    settings.taskcount+=1
-    $("#taskname").val("");
-    $("#numberpomodoros").val("");
-  )
+  bindPantry() #bind event listeners to the pantry buttons
+  #pantry stuff
+
 )
 
 advancePomodoro = () ->
@@ -68,3 +61,28 @@ advancePomodoro = () ->
 loadPantry = () ->
   poop = 1
 
+bindPantry = () ->
+  $("#create-task").click( ()-> #stuff to do when create task button is pressed
+    console.log("click")
+    taskname = $("#taskname").val()
+    estimated = $("#numberpomodoros").val()
+    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td>'+ taskname+'</td><td>'+estimated+'</td><td class="count-actual"></td><td><button type="button" id="'+settings.taskcount+'" class="start btn btn-success">Start</button><button type="button" id="'+settings.taskcount+'" class="edit btn btn-warning">Edit</button><button type="button" id="'+settings.taskcount+'" class="delete btn btn-danger">Delete</button></td></tr>')
+    settings.taskcount+=1
+    $("#taskname").val("");
+    $("#numberpomodoros").val("");
+  )
+
+  $("#pantry-table").on('click','.start', ()-> #start task button is pressed
+    $(this).parents("tr.task").remove();
+  )
+
+  $("#pantry-table").on('click','.start', ()-> #edit task button is pressed
+    $(this).parents("tr.task").remove();
+  )
+
+  $("#pantry-table").on('click','.delete', ()-> #delete task button is pressed
+    $(this).parents("tr.task").remove();
+  )
+
+PromptYesNo(text) ->
+  #creates a yes/no modal prompt
