@@ -1,6 +1,6 @@
 settings =
-  pomo: 25 #length of a pomodoro
-  shortbreak: 5 #length of a short break
+  pomo: 1 #length of a pomodoro
+  shortbreak: 1 #length of a short break
   longbreak: 30 #length of a long break
   break: false #whether on break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
@@ -16,7 +16,7 @@ savedata = []
 
 $(document).ready(()->
   #timer stuff
-
+  initializeTimer()#create the timer
 
   bindPantry() #bind event listeners to the pantry buttons
   #pantry stuff
@@ -43,18 +43,21 @@ advancePomodoro = () -> #advance the pomodoro timer to the next state
 
   if state == 8 #end of a pomodoro cycle
     state=0
+    $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
       currentpomodoro.elapsed +=1
       $("#elapsed").text(currentpomodoro.elapsed)
       $.playSound("/sound/timer-alarm.mp3")
-      if state != 7 #not a long break
-        addTime = settings.shortbreak
-      else
+      $("#pomodoro-timer").css('background-color','#2ecc71') #change timer background to green
+      if state == 7 #long break
         addTime = settings.longbreak
+      else
+        addTime = settings.shortbreak
     else
       $.playSound("/sound/break-alarm.mp3")
       addTime = settings.pomo
+      $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to red
       #update pomodoros elapsed counter
 
     settings.state+=1
@@ -68,10 +71,9 @@ loadPantry = () ->
 
 bindPantry = () ->
   $("#create-task").click( ()-> #stuff to do when create task button is pressed
-    console.log("click")
     taskname = $("#taskname").val()
     estimated = $("#numberpomodoros").val()
-    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td>'+ taskname+'</td><td>'+estimated+'</td><td class="count-actual"></td><td><button type="button" id="'+settings.taskcount+'" class="start btn btn-success">Start</button><button type="button" id="'+settings.taskcount+'" class="edit btn btn-warning">Edit</button><button type="button" id="'+settings.taskcount+'" class="delete btn btn-danger">Delete</button></td></tr>')
+    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td>'+ taskname+'</td><td>'+estimated+'</td><td class="count-actual"></td><td></td><td><button type="button" id="'+settings.taskcount+'" class="start btn btn-success">Start</button><button type="button" id="'+settings.taskcount+'" class="edit btn btn-warning">Edit</button><button type="button" id="'+settings.taskcount+'" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
     settings.taskcount+=1
     $("#taskname").val("");
     $("#numberpomodoros").val("");
