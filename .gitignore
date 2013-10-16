@@ -10,3 +10,4 @@
 /css/main.css
 
 *.map
+/application/config/config.php
