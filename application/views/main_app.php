@@ -50,7 +50,7 @@
             </div>
             <div class="tab-pane fade" id="timer">
                 <div class="row">
-                    <div>Current Task:<span id="task">None</span></div>
+                    <div>Current Task:<span id="current-task">None</span></div>
                     <div><span id="elapsed">0</span> Pomodoros elapsed.</div>
                 </div>
                 <div class="row">

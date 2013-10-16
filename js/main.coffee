@@ -54,6 +54,7 @@ bindTimerControls = () ->
     if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
       settings.state = 0; #timer is not active
       _resetTimer() #reset the timer
+      $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
       $("#timer-controls").html(startButton)
   )
 
@@ -131,7 +132,7 @@ bindPantry = () ->
   $("#pantry-table").on('click','.start', ()->
     current.taskid = $(this).parents("tr.task").attr("id");
     current.taskname = $(this).parent().siblings(".taskname").html();
-    console.log current.taskname
+    $("#current-task").html(current.taskname);
     $('#main-tab-container a[href="#timer"]').tab('show');
   )
 
@@ -161,3 +162,7 @@ _getDate = () ->
 _resetTimer = () ->
   $("#pomodoro-timer").countdown("destroy");
   $("#pomodoro-timer").countdown({compact: true, format: 'HMS', description: '', onExpiry: advancePomodoro});
+
+  #reset timer descriptions
+  $("#current-task").html("None")
+  $("#elapsed").html("0")
