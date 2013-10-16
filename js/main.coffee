@@ -1,6 +1,6 @@
 settings =
-  pomo: 1 #length of a pomodoro
-  shortbreak: 1 #length of a short break
+  pomo: 25 #length of a pomodoro
+  shortbreak: 5 #length of a short break
   longbreak: 30 #length of a long break
   break: false #whether on break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
@@ -17,24 +17,21 @@ current =
 savedata = []
 
 $(document).ready(()->
-  #timer stuff
-  initializeTimer()#create the timer
-
-  bindPantry() #bind event listeners to the pantry buttons
-  #pantry stuff
-
-)
-
-initializeTimer = () -> #timer stuff
+  #create the timer
   _resetTimer()
   bindTimerControls()
+
+  #bind event listeners to the pantry buttons
+  bindPantry()
+)
+
 
 #bind the start, stop, complete buttons
 bindTimerControls = () ->
   #button definitions
   startButton ='<button type="button" id="start-pomodoro" class="btn btn-success">Start Pomodoro</button>'
   stopButton = '<button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button>'
-  doneButton = '<button type="button" id="task-complete" class="btn btn-primary">Mark Task as Complete</button>'
+  doneButton = '<button type="button" id="task-complete" class="btn btn-primary disabled">Mark Task as Complete</button>' #disable until one pomodoro
 
   #bind start button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#start-pomodoro', ()->
@@ -62,9 +59,8 @@ bindTimerControls = () ->
 
   #bind task complete button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#task-complete', ()->
-    if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
       settings.state = 0; #timer is not active
-      completTask(current.taskid,current.elapsed)
+      completeTask(current.taskid,current.elapsed)
       #reset the current task variable
       current.elapsed=0;
       current.taskid=0;
@@ -79,16 +75,17 @@ advancePomodoro = () ->
   state = settings.state
   time = new Date();
   addTime = 0; #time to be added
-
+  $("#task-complete").removeClass("disabled")
   if state == 8 #end of a pomodoro cycle
     state=0
     $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
       current.elapsed +=1 #update pomodoros elapsed counter
-      $("#elapsed").text(currentpomodoro.elapsed)
+      $("#elapsed").text(current.elapsed)
       $.playSound("/sound/timer-alarm.mp3")
       $("#pomodoro-timer").css('background-color','#2ecc71') #change timer background to green
+
       if state == 7 #long break
         addTime = settings.longbreak
       else
@@ -111,8 +108,9 @@ completeTask = (taskid,actual) ->
   sel = $("#pantry-table tr#"+taskid)
   sel.children("td.count-actual").html(actual)
   estimated=parseInt(sel.children("td.estimated").html())
-  sel.children("td.efficiency").html(Math.round(estimated/actual*100)+"%")
+  sel.children("td.efficiency").html(Math.round(estimated/actual*100)+"%") #update efficiency
   sel.find("td.actions .start").remove(); #remove the start button
+  $('#main-tab-container a[href="#pantry"]').tab('show');#return to pantry tab
 
 #pantry manager
 loadPantry = () ->
