@@ -67,7 +67,8 @@ class Tasksmod extends CI_Model
      * @param $actual
      */
     public function updateStatus($user_id,$task_id,$actual,$completed){
-
+        $this->db->update('tasks',array('actual'=>$actual,'completed'=>$completed),array('user_id'=>$user_id,'task_id'=>$task_id));
+        return true;
     }
 
     /*Checking functions*/

@@ -45,13 +45,15 @@ class Tasks extends CI_Controller
     }
 
     public function updateTask() {
-        $this->input->post("n");//name of task
+        $this->input->post("id");//name of task
         $this->input->post("e");//estimated pomodoros
     }
 
     public function updateStatus() {
-
-        $this->input->post("c");//completed
+        $task_id = $this->input->post("id");//task name
+        $actual = $this->input->post("a");//actual number of pomodoros
+        $completed = $this->input->post("c");//completed
+        echo json_encode($this->tasksmod->updateStatus($this->session->userdata('id'),$task_id,$actual,$completed));
     }
 
     /*private helper functions*/
