@@ -24,7 +24,8 @@ class Tasksmod extends CI_Model
      * @param $estimated
      */
     public function newTask($user_id,$task_name,$date,$estimated) {
-
+        $this->db->insert('tasks',array('user_id' => $user_id, 'task_name' => $task_name, 'date' => $date, 'estimated' => $estimated));
+        return $this->db->insert_id();
     }
 
     /**
@@ -32,7 +33,19 @@ class Tasksmod extends CI_Model
      * @param $user_id
      */
     public function loadAllTasks($user_id) {
+            $this->db->select(array("task_id", "task_name", "date", "estimated", "actual", "completed"))->where('user_id', $user_id);
+            $query = $this->db->get('tasks');
+            if ($query->num_rows() > 0) {
+                foreach ($query->result_array() as $row)
+                    $data[] = $row;
+                return $data;
+            }
+        else return false;
+    }
 
+    public function deleteTask($user_id,$task_id) {
+        $this->db->delete('tasks',array('user_id' => $user_id, 'task_id' =>$task_id));
+        return true;
     }
 
     /* Updating functions*/
@@ -44,7 +57,7 @@ class Tasksmod extends CI_Model
      * @param $estimated
      * @todo disable updating after task is completed
      */
-    public function updateTask($task_id,$task_name,$estimated){
+    public function updateTask($user_id,$task_id,$task_name,$estimated){
 
     }
 
@@ -53,7 +66,7 @@ class Tasksmod extends CI_Model
      * @param $task_id
      * @param $actual
      */
-    public function updateStatus($task_id,$actual){
+    public function updateStatus($user_id,$task_id,$actual,$completed){
 
     }
 
