@@ -17,7 +17,7 @@
             <?php
             if ($this->session->userdata('auth') == 'true') {
                 echo '<li><a style="background: rgba(0,0,0,0)">Hi ' . $this->session->userdata('name') . '!</a></li>';
-                echo '<li><a href="/profile">Profile</a></li>' . '<li><a href="/login/logout">Logout</a>';
+                echo '<!--<li><a href="/profile">Profile</a></li>-->' . '<li><a href="/login/logout">Logout</a>';
             } else {
                 echo '<li><a href="/login">Login / Register</a></li>';
             }?>

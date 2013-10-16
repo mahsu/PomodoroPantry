@@ -21,7 +21,7 @@ class Login extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model("usermod")
+        $this->load->model("usermod");
 
     }
 
@@ -68,10 +68,9 @@ class Login extends CI_Controller
                 $lname = $user_data['namePerson/last'];
                 $email = $user_data['contact/email'];
                 // Add new user or retrieve id of existing user
-                $user_id = $this->usermod->addUser($email,$fname,$lname);
-                if ($user_id != false){
-                    $this->session->set_userdata(array('auth' => 'true', 'email' => $email, 'id' => $user_id));
-                    redirect(base_url('register/username'));
+                $user_id = $this->usermod->addUser($email, $fname, $lname);
+                if ($user_id != false) {
+                    $this->session->set_userdata(array('auth' => 'true', 'email' => $email, 'id' => $user_id, 'name' => $fname));
                     redirect(base_url('app'));
                 } else {
                     exit("Oops. Something went wrong. :(");
@@ -80,5 +79,11 @@ class Login extends CI_Controller
 
             }
         }
+    }
+
+    public function logout()
+    {
+        $this->session->sess_destroy();
+        redirect(base_url('app'));
     }
 }
