@@ -9,10 +9,10 @@ settings =
 current =
   taskid: 0 #id of task
   taskname: "" #name of task
-  date: "" #date created
-  estimated: 0 #estimated pomodoros
+  #date: "" #date created
+  #estimated: 0 #estimated pomodoros
   elapsed: 0 #elapsed
-  complete: false #whether complete
+  #complete: false #whether complete
 
 savedata = []
 
@@ -79,6 +79,7 @@ advancePomodoro = () ->
   $("#task-complete").removeClass("disabled")
   if state == 8 #end of a pomodoro cycle
     state=0
+    settings.state=0
     $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
@@ -147,11 +148,11 @@ bindPantry = () ->
   #delete task button is pressed
   $("#pantry-table").on('click','.delete', ()->
     $(this).parents("tr.task").remove();
+    _resetTimer() #clear pomodoro timer
   )
 
   #enable/disable the add task button
   $("#taskname").keyup( ()->
-    console.log $(this).val()
     if $(this).val() != ""
       $("#create-task").removeClass("disabled")
     else $("#create-task").addClass("disabled")
@@ -182,3 +183,5 @@ _resetTimer = () ->
 _reset = (taskid) ->
   sel = $("#pantry-table tr#"+taskid)
   sel.find("td.actions .start").removeClass("disabled")
+
+#reset all action buttons

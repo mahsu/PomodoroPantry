@@ -56,7 +56,7 @@
                     <div><span id="elapsed">0</span> Pomodoros elapsed.</div>
                 </div>
                 <div class="row">
-                    <div class="col-md-offset-4 col-md-4">
+                    <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 col-sm-offset-3 col-sm-6">
                         <div id="pomodoro-timer"></div>
                     </div>
                 </div>
