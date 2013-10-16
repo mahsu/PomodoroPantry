@@ -43,14 +43,16 @@
                                 ?>
                             </select>
                         </div>
-                        <button type="button" id="create-task" class="btn btn-default">Add Task</button>
+                        <div class="form-group">
+                        <button type="button" id="create-task" class="btn btn-default disabled">Add Task</button>
+                           </div>
                     </form>
                     <span>Keep in mind that each pomodoro is 25 minutes in length.</span>
                 </div>
             </div>
             <div class="tab-pane fade" id="timer">
                 <div class="row">
-                    <div>Current Task:<span id="current-task">None</span></div>
+                    <div>Current Task: <span id="current-task">None</span></div>
                     <div><span id="elapsed">0</span> Pomodoros elapsed.</div>
                 </div>
                 <div class="row">

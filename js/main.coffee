@@ -122,18 +122,21 @@ bindPantry = () ->
   $("#create-task").click( ()-> #stuff to do when create task button is pressed
     taskname = $("#taskname").val()
     estimated = $("#numberpomodoros").val()
-    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td class="taskname">'+ taskname+'</td><td class="estimated">'+estimated+'</td><td class="count-actual"></td><td class="efficiency"></td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
+    $("#pantry-table").append('<tr id="'+settings.taskcount+'" class="task"><td class="taskname">'+ taskname+'</td><td class="estimated">'+estimated+'</td><td class="count-actual">-</td><td class="efficiency">-</td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
     settings.taskcount+=1;
     $("#taskname").val("");
-    $("#numberpomodoros").val("");
+    $("#numberpomodoros").val(1);
+    $(this).addClass("disabled")
   )
 
   #start task button is pressed
   $("#pantry-table").on('click','.start', ()->
+    _reset(current.taskid) #enable any disabled buttons for previous task
     current.taskid = $(this).parents("tr.task").attr("id");
     current.taskname = $(this).parent().siblings(".taskname").html();
     $("#current-task").html(current.taskname);
     $('#main-tab-container a[href="#timer"]').tab('show');
+    $(this).addClass("disabled");
   )
 
   #edit task button is pressed
@@ -144,6 +147,14 @@ bindPantry = () ->
   #delete task button is pressed
   $("#pantry-table").on('click','.delete', ()->
     $(this).parents("tr.task").remove();
+  )
+
+  #enable/disable the add task button
+  $("#taskname").keyup( ()->
+    console.log $(this).val()
+    if $(this).val() != ""
+      $("#create-task").removeClass("disabled")
+    else $("#create-task").addClass("disabled")
   )
 
 ###PromptYesNo(text) ->
@@ -166,3 +177,8 @@ _resetTimer = () ->
   #reset timer descriptions
   $("#current-task").html("None")
   $("#elapsed").html("0")
+
+#reset action buttons for previous task
+_reset = (taskid) ->
+  sel = $("#pantry-table tr#"+taskid)
+  sel.find("td.actions .start").removeClass("disabled")
