@@ -18,7 +18,7 @@
             padding-bottom: 40px;
         }
     </style>
-    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/main.min.css" rel="stylesheet">
 
     <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">

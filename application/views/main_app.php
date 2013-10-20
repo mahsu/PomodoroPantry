@@ -1,8 +1,11 @@
-<script src="/js/main.js"></script>
+<script src="/js/main.min.js"></script>
 
 <div class="container">
+    <?php if (!$this->session->userdata('auth'))
+    echo '<div class="alert alert-danger"><strong>You are not logged in!</strong> You will not be able to save changes or keep a record of your pomodoros. Please <a href="/login">login</a> to continue.</div>';?>
+    <div id="alert-error" class="alert alert-danger" style="display:none;"><span id="alert-text"></span></div>
     <div class="row">
-        <div class="col-md-offset-2 col-md-8">
+        <div class="col-md-offset-1 col-md-10">
             <ul id="main-tab-container" class="nav nav-tabs">
                 <li class="active"><a href="#pantry" data-toggle="tab">Pomodoro Pantry</a></li>
                 <li><a href="#timer" data-toggle="tab">Pomodoro Timer</a></li>

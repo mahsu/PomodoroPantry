@@ -34,9 +34,9 @@ $(document).ready(()->
       if (jqXHR.status == 0)
         _connectionError('Unable to connect to server. Verify your network connection.');
       else if (jqXHR.status == 404)
-        _connectionError('That\'s odd.. The requested page was not found.');
+        _connectionError('404 The requested page was not found.');
       else if (jqXHR.status == 500)
-        _connectionError('Internal Server Error.');
+        _connectionError('500 Internal Server Error.');
       else if (exception == 'parsererror')
         _connectionError('Looks like your session has expired. Try refreshing the page and signing in again.');
       else if (exception == 'timeout')
@@ -286,10 +286,17 @@ _advancePomodoro = () ->
   addTime = 0; #time to be added
   $("#task-complete").removeClass("disabled")
   if state == 8 #end of a pomodoro cycle
-    state=0
+    #end of cycle
+    #state=0
+    #settings.state=0
+    #$("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
+    #updateStatus(current.taskid,current.elapsed,false)
+
+    #start another pomodoro
     settings.state=0
-    $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
-    updateStatus(current.taskid,current.elapsed,false)
+    $.playSound("/sound/break-alarm.mp3")
+    addTime = settings.pomo
+    $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to red
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
       current.elapsed +=1 #update pomodoros elapsed counter
@@ -302,6 +309,7 @@ _advancePomodoro = () ->
       else
         addTime = settings.shortbreak
     else
+      #start another pomodoro
       $.playSound("/sound/break-alarm.mp3")
       addTime = settings.pomo
       $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to red
