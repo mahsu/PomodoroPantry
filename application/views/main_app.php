@@ -2,7 +2,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-offset-3 col-md-6">
+        <div class="col-md-offset-2 col-md-8">
             <ul id="main-tab-container" class="nav nav-tabs">
                 <li class="active"><a href="#pantry" data-toggle="tab">Pomodoro Pantry</a></li>
                 <li><a href="#timer" data-toggle="tab">Pomodoro Timer</a></li>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="tab-pane fade" id="timer">
                     <div class="row">
-                        <div>Current Task: <span id="current-task">None</span></div>
+                        <div>Current Task: <span id="current-task">None</span> <span id="cancel-task"></span></div>
                         <div><span id="elapsed">0</span> Pomodoros elapsed.</div>
                     </div>
                     <div class="row">

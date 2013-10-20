@@ -68,7 +68,7 @@ newTask = (taskname,estimated) ->
       settings.taskcount+=1;
       $("#taskname").val("");
       $("#numberpomodoros").val(1);
-      $(this).addClass("disabled")
+      $("#create-task").addClass("disabled")
   )
 
 #delete a task
@@ -96,7 +96,7 @@ loadTasks = () ->
         #determine if task is complete
         if parseInt(i.actual) == 0
           i.actual = '-'
-        if i.completed&1 == 1
+        if i.completed&1 == 1 #convert from string to integer
           efficiency = Math.round(estimated/actual*100)+"%"
         $("#pantry-table").append('<tr id="'+i.task_id+'" class="task"><td class="taskname">'+ i.task_name+'</td><td class="estimated">'+i.estimated+'</td><td class="count-actual">'+i.actual+'</td><td class="efficiency">'+efficiency+'</td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
         if i.completed&1 == 1 #disable buttons if task is completed
@@ -127,11 +127,11 @@ updateStatus = (taskid,actual,completed) ->
 
       #update pantry
       selector = $("tr.task#"+taskid)
-      selector.find(".count-actual").html(actual)
+      selector.find(".count-actual").text(actual)
       if completed == true
         selector.find(".start").addClass("disabled")
         selector.find(".edit").addClass("disabled")
-        selector.find(".efficiency").html(Math.round(current.estimated/actual*100)+"%")
+        selector.find(".efficiency").text(Math.round(current.estimated/actual*100)+"%")
   )
 
 #edit a task name or estimated pomodoros
@@ -165,7 +165,7 @@ bindTimerControls = () ->
     $("#start-pomodoro").remove(); #remove start button
 
     #create stop buttons
-    $("#timer-controls").html('')
+    $("#timer-controls").text('')
     if current.taskname == "" #no task is active - don't show task completed button
       $("#timer-controls").html(stopButton)
     else $("#timer-controls").html(stopButton + doneButton)
@@ -183,6 +183,16 @@ bindTimerControls = () ->
       #completeTask(current.taskid,current.elapsed)
       updateStatus(current.taskid,current.elapsed,true)
       $("#timer-controls").html(startButton)
+  )
+
+  #bind cancel current task button
+  $("#cancel").click( ()->
+    if settings.state != 0 #timer is currently active
+      if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
+        updateStatus(current.taskid,current.elapsed,false)
+        $("#timer-controls").html(startButton)
+    _resetTimer() #reset timer
+    _reset(current.taskid) #remove active task
   )
 
 
@@ -209,18 +219,26 @@ bindPantry = () ->
   #start task button is pressed
   $("#pantry-table").on('click','.start', ()->
     _reset(current.taskid) #enable any disabled buttons for previous task
+
+    #set the current task container
     current.taskid = $(this).parents("tr.task").attr("id");
     current.taskname = $(this).parent().siblings(".taskname").html();
     current.estimated = parseInt($(this).parent().siblings(".estimated").html())
     current.actual = parseInt($(this).parent().siblings(".count-actual").html())
+
     #check for NaN exceptions
     if isNaN(current.estimated)
       current.estimated=0
     if isNaN(current.actual)
       current.actual=0
-    $("#current-task").html(current.taskname);
-    $('#main-tab-container a[href="#timer"]').tab('show');
+
+    #timer visual elements
+    $("#cancel-task").text("(Cancel)");
+    $("#current-task").text(current.taskname); #set the current task
+    $('#main-tab-container a[href="#timer"]').tab('show'); #switch to timer tab
     $(this).addClass("disabled");
+
+
   )
 
   #edit task button is pressed
@@ -295,8 +313,9 @@ _resetTimer = () ->
   $("#pomodoro-timer").countdown({compact: true, format: 'HMS', description: '', onExpiry: _advancePomodoro});
 
   #reset timer descriptions
-  $("#current-task").html("None")
-  $("#elapsed").html("0")
+  $("#current-task").text("None")
+  $("#elapsed").text("0")
+  $("#cancel").text("");
 
 #reset action buttons for previous task
 _reset = (taskid) ->
