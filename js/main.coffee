@@ -25,6 +25,9 @@ $(document).ready(()->
   #bind event listeners to the pantry buttons
   bindPantry()
 
+  #load all tasks
+  loadTasks()
+
   #setup ajax defaults
   $.ajaxSetup(
     error: (jqXHR, exception) ->
@@ -44,8 +47,26 @@ $(document).ready(()->
         _connectionError('Unexpected Error.\n' + jqXHR.responseText);
   );
 
-  #load all tasks
-  loadTasks()
+  #bind modal close event
+  $("#modal-edit").on("hide.bs.modal", () ->
+    $("#modal-edit-id").val('');
+    $("#modal-edit-name").val(1)
+    $("#modal-edit-numberpomodoros").val('')
+    $("#modal-edit-btn-save").removeClass("disabled")
+  )
+
+  #enable/disable the save changes button
+  $("#modal-edit-name").keyup( ()->
+    if $(this).val() != ""
+      $("#modal-edit-btn-save").removeClass("disabled")
+    else $("#modal-edit-btn-save").addClass("disabled")
+  )
+
+  #save button event handler
+  $("#modal-edit-btn-save").click( ()->
+    #save the editted task
+    editTask($("#modal-edit-id").val(),$("#modal-edit-name").val(),$("#modal-edit-numberpomodoros").val())
+  )
 )
 
 
@@ -137,7 +158,7 @@ updateStatus = (taskid,actual,completed) ->
 #edit a task name or estimated pomodoros
 editTask = (taskid,taskname,estimated) ->
   $.ajax(
-    url: "/tasks/updateStatus",
+    url: "/tasks/editTask",
     type: 'POST',
     data:
       id: taskid
@@ -145,6 +166,9 @@ editTask = (taskid,taskname,estimated) ->
       e: estimated
     dataType: 'json', #data format
     success: (data) ->  #refresh stats on success
+      $("#modal-edit").modal('hide');
+      $("tr#"+taskid+" .taskname").text(taskname);
+      $("tr#"+taskid+" .estimated").text(estimated);
   )
 
 #bind the start, stop, complete buttons
@@ -161,7 +185,6 @@ bindTimerControls = () ->
     #time.setSeconds(time.getSeconds() + settings.pomo);
     $("#pomodoro-timer").countdown('option',{until: time});
     settings.state = 1; #timer is active
-    #$(this).unbind(); #unbind start button
     $("#start-pomodoro").remove(); #remove start button
 
     #create stop buttons
@@ -186,7 +209,8 @@ bindTimerControls = () ->
   )
 
   #bind cancel current task button
-  $("#cancel").click( ()->
+  $("#cancel-task").click( (e)->
+    e.preventDefault() #prevent link from triggering
     if settings.state != 0 #timer is currently active
       if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
         updateStatus(current.taskid,current.elapsed,false)
@@ -194,18 +218,6 @@ bindTimerControls = () ->
     _resetTimer() #reset timer
     _reset(current.taskid) #remove active task
   )
-
-
-###
-#update completed task
-completeTask = (taskid,actual) ->
-  #insert ajax updating here
-  sel = $("#pantry-table tr#"+taskid)
-  sel.children("td.count-actual").html(actual)
-  estimated=parseInt(sel.children("td.estimated").html())
-  sel.children("td.efficiency").html(Math.round(estimated/actual*100)+"%") #update efficiency
-  sel.find("td.actions .start").remove(); #remove the start button
-###
 
 
 #event handlers for the pantry buttons
@@ -222,9 +234,9 @@ bindPantry = () ->
 
     #set the current task container
     current.taskid = $(this).parents("tr.task").attr("id");
-    current.taskname = $(this).parent().siblings(".taskname").html();
-    current.estimated = parseInt($(this).parent().siblings(".estimated").html())
-    current.actual = parseInt($(this).parent().siblings(".count-actual").html())
+    current.taskname = $(this).parent().siblings(".taskname").text();
+    current.estimated = parseInt($(this).parent().siblings(".estimated").text())
+    current.actual = parseInt($(this).parent().siblings(".count-actual").text())
 
     #check for NaN exceptions
     if isNaN(current.estimated)
@@ -244,6 +256,9 @@ bindPantry = () ->
   #edit task button is pressed
   $("#pantry-table").on('click','.edit', ()->
     $("#modal-edit").modal('show');
+    $("#modal-edit-id").val($(this).parents("tr.task").attr("id"));
+    $("#modal-edit-name").val($(this).parent().siblings(".taskname").text())
+    $("#modal-edit-numberpomodoros").val($(this).parent().siblings(".estimated").text())
   )
 
   #delete task button is pressed
@@ -315,7 +330,7 @@ _resetTimer = () ->
   #reset timer descriptions
   $("#current-task").text("None")
   $("#elapsed").text("0")
-  $("#cancel").text("");
+  $("#cancel-task").text("");
 
 #reset action buttons for previous task
 _reset = (taskid) ->
@@ -324,8 +339,8 @@ _reset = (taskid) ->
   #reset the current task variable
   current.elapsed=0;
   current.taskid=0;
-  current.taskname = ""
-  current.estimated=0
+  current.taskname = "";
+  current.estimated=0;
   current.actual = 0;
 
 #reset all action buttons

@@ -44,7 +44,7 @@ class Tasks extends CI_Controller
         echo json_encode($this->tasksmod->loadAllTasks($this->session->userdata("id")));
     }
 
-    public function updateTask() {
+    public function editTask() {
         $task_id = $this->input->post("id");//id of task
         $task_name = $this->input->post("n");//name of task
         $estimated = $this->input->post("e");//estimated pomodoros

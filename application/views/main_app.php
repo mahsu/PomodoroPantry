@@ -54,7 +54,7 @@
                 </div>
                 <div class="tab-pane fade" id="timer">
                     <div class="row">
-                        <div>Current Task: <span id="current-task">None</span> <span id="cancel-task"></span></div>
+                        <div>Current Task: <span id="current-task">None</span> <a id="cancel-task"></a></div>
                         <div><span id="elapsed">0</span> Pomodoros elapsed.</div>
                     </div>
                     <div class="row">
@@ -87,6 +87,7 @@
                 </div>
                 <div class="modal-body">
                     <form role="form">
+                        <input type="hidden" id="modal-edit-id">
                         <div class="form-group">
                             <label for="modal-edit-name">Task Name</label>
                             <input type="email" class="form-control" id="modal-edit-name" placeholder="Task Name">
@@ -104,7 +105,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" id="modal-edit-btn-save" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
             <!-- /.modal-content -->
