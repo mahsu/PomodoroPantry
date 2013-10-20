@@ -1,3 +1,5 @@
+#@TODO rename all occurrances of efficiency with accuracy
+
 settings =
   pomo: 25 #length of a pomodoro
   shortbreak: 5 #length of a short break

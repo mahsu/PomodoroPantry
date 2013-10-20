@@ -58,7 +58,8 @@ class Tasksmod extends CI_Model
      * @todo disable updating after task is completed
      */
     public function updateTask($user_id,$task_id,$task_name,$estimated){
-
+        $this->db->update('tasks',array('task_name'=>$task_name,'estimated'=>$estimated),array('user_id'=>$user_id,'task_id'=>$task_id));
+        return true;
     }
 
     /**

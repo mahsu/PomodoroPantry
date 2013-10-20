@@ -17,7 +17,7 @@
                                 <th>Task</th>
                                 <th>Est. Pomodoros</th>
                                 <th>Actual Pomodoros</th>
-                                <th>Efficiency</th>
+                                <th>Accuracy</th>
                                 <th>Actions</th>
                             </tr>
                         </table>
