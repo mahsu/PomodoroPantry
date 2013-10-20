@@ -4,9 +4,9 @@ settings =
   pomo: 25 #length of a pomodoro
   shortbreak: 5 #length of a short break
   longbreak: 30 #length of a long break
-  break: false #whether on break
+  #break: false #whether on break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
-  taskcount: 0 #current number of tasks
+  #taskcount: 0 #current number of tasks
 
 current =
   taskid: 0 #id of task
@@ -86,7 +86,7 @@ newTask = (taskname,estimated) ->
     dataType: 'json', #data format
     success: (data) ->  #refresh stats on success
       $("#pantry-table").append('<tr id="'+data+'" class="task"><td class="taskname">'+ taskname+'</td><td class="estimated">'+estimated+'</td><td class="count-actual">-</td><td class="efficiency">-</td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
-      settings.taskcount+=1;
+      #settings.taskcount+=1;
       $("#taskname").val("");
       $("#numberpomodoros").val(1);
       $("#create-task").addClass("disabled")
@@ -123,7 +123,7 @@ loadTasks = () ->
         if i.completed&1 == 1 #disable buttons if task is completed
           $("tr.task#"+i.task_id+" .start").addClass("disabled")
           $("tr.task#"+i.task_id+" .edit").addClass("disabled")
-        settings.taskcount+=1;
+        #settings.taskcount+=1;
         $("#taskname").val("");
         $("#numberpomodoros").val(1);
     )
@@ -328,7 +328,7 @@ _resetTimer = () ->
   $("#pomodoro-timer").countdown({compact: true, format: 'HMS', description: '', onExpiry: _advancePomodoro});
 
   #reset timer descriptions
-  $("#current-task").text("None")
+  $("#current-task").text("")
   $("#elapsed").text("0")
   $("#cancel-task").text("");
 

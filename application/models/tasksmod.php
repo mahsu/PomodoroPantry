@@ -43,6 +43,12 @@ class Tasksmod extends CI_Model
         else return false;
     }
 
+    /**
+     * delete a task given user and task
+     * @param $user_id
+     * @param $task_id
+     * @return bool
+     */
     public function deleteTask($user_id,$task_id) {
         $this->db->delete('tasks',array('user_id' => $user_id, 'task_id' =>$task_id));
         return true;
@@ -72,5 +78,4 @@ class Tasksmod extends CI_Model
         return true;
     }
 
-    /*Checking functions*/
 }
