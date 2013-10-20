@@ -1,6 +1,6 @@
 settings =
-  pomo: 1 #length of a pomodoro
-  shortbreak: 1 #length of a short break
+  pomo: 25 #length of a pomodoro
+  shortbreak: 5 #length of a short break
   longbreak: 30 #length of a long break
   break: false #whether on break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
@@ -132,6 +132,19 @@ updateStatus = (taskid,actual,completed) ->
         selector.find(".efficiency").html(Math.round(current.estimated/actual*100)+"%")
   )
 
+#edit a task name or estimated pomodoros
+editTask = (taskid,taskname,estimated) ->
+  $.ajax(
+    url: "/tasks/updateStatus",
+    type: 'POST',
+    data:
+      id: taskid
+      n: taskname
+      e: estimated
+    dataType: 'json', #data format
+    success: (data) ->  #refresh stats on success
+  )
+
 #bind the start, stop, complete buttons
 bindTimerControls = () ->
   #button definitions
@@ -142,8 +155,8 @@ bindTimerControls = () ->
   #bind start button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#start-pomodoro', ()->
     time = new Date();
-    #time.setMinutes(time.getMinutes() + settings.pomo);
-    time.setSeconds(time.getSeconds() + settings.pomo);
+    time.setMinutes(time.getMinutes() + settings.pomo);
+    #time.setSeconds(time.getSeconds() + settings.pomo);
     $("#pomodoro-timer").countdown('option',{until: time});
     settings.state = 1; #timer is active
     #$(this).unbind(); #unbind start button
@@ -210,7 +223,7 @@ bindPantry = () ->
 
   #edit task button is pressed
   $("#pantry-table").on('click','.edit', ()->
-    #$(this).parents("tr.task").remove();
+    $("#modal-edit").modal('show');
   )
 
   #delete task button is pressed
