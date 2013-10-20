@@ -2,7 +2,7 @@
 
 <div class="container">
     <?php if (!$this->session->userdata('auth'))
-    echo '<div class="alert alert-danger"><strong>You are not logged in!</strong> You will not be able to save changes or keep a record of your pomodoros. Please <a href="/login">login</a> to continue.</div>';?>
+        echo '<div class="alert alert-danger"><strong>You are not logged in!</strong> You will not be able to save changes or keep a record of your pomodoros. Please <a href="/login">login</a> to continue.</div>';?>
     <div id="alert-error" class="alert alert-danger" style="display:none;"><span id="alert-text"></span></div>
     <div class="row">
         <div class="col-md-offset-1 col-md-10">
@@ -91,6 +91,7 @@
 
                     <div class="row">
                         <div class="col-md-6">
+                            <h4>Timer</h4>
                             <p>Each pomodoro is 25 minutes in length. A pomodoro cycle consists of:
                             <ul>
                                 <li>3x 25 minute pomodoros with a short break (5 mins) after each.</li>
@@ -99,6 +100,7 @@
                             Once the timer is started, it cannot be paused.</p>
                         </div>
                         <div class="col-md-6">
+                            <h4>Tracking a Task</h4>
                             <p>Start a task from the pantry tab to keep track of your progress.</p>
                         </div>
                     </div>
@@ -111,7 +113,7 @@
                     <h4>What is the Pomodoro Technique?</h4>
 
                     <p>According to the technique's <a href="http://pomodorotechnique.com/" target="_blank">website</a>,
-                        "The Pomodoro Technique® is a time management method. This Technique helps you to transform time
+                        "The Pomodoro Technique® is a time management method. This technique helps you to transform time
                         into a valuable ally by helping you accomplish what you want to do and charting continuous
                         improvement in the way you do it."</p>
                     <br/>

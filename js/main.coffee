@@ -4,22 +4,19 @@ settings =
   pomo: 25 #length of a pomodoro
   shortbreak: 5 #length of a short break
   longbreak: 30 #length of a long break
-  #break: false #whether on break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
-  #taskcount: 0 #current number of tasks
 
 current =
   taskid: 0 #id of task
   taskname: "" #name of task
   actual: 0 #actual number of pomodoros
   elapsed: 0 #elapsed
-  #complete: false #whether complete
-
-savedata = []
 
 $(document).ready(()->
   #create the timer
   _resetTimer()
+
+  #bind event listeners to timer controls
   bindTimerControls()
 
   #bind event listeners to the pantry buttons
@@ -36,7 +33,7 @@ $(document).ready(()->
       else if (jqXHR.status == 404)
         _connectionError('404 The requested page was not found.');
       else if (jqXHR.status == 500)
-        _connectionError('500 Internal Server Error.');
+        _connectionError('500 Internal Server Error. Your session has expired, or you are not logged in.');
       else if (exception == 'parsererror')
         _connectionError('Looks like your session has expired. Try refreshing the page and signing in again.');
       else if (exception == 'timeout')
@@ -70,9 +67,9 @@ $(document).ready(()->
 )
 
 
-###
-  AJAX FUNCTIONS
-###
+##################
+# AJAX FUNCTIONS #
+##################
 
 #add new task to save data array
 newTask = (taskname,estimated) ->
@@ -129,7 +126,7 @@ loadTasks = () ->
     )
 
 #update the actual number of pomodoros or whether task is complete
-updateStatus = (taskid,actual,completed) ->
+updateStatus = (taskid,actual,completed,backgroundUpdate) ->
   actual = current.actual + actual
   $.ajax(
     url: "/tasks/updateStatus",
@@ -140,19 +137,20 @@ updateStatus = (taskid,actual,completed) ->
       c: completed&1
     dataType: 'json', #data format
     success: (data) ->  #refresh stats on success
-      $("tr.task#"+current.taskid).find(".start").removeClass("disabled")#enable the start button again
-      settings.state = 0; #timer is not active
-      _resetTimer() #reset the timer
-      $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
-      $('#main-tab-container a[href="#pantry"]').tab('show');#return to pantry tab
+      if backgroundUpdate == false #do not update in the background - task is actually complete
+        $("tr.task#"+current.taskid).find(".start").removeClass("disabled")#enable the start button again
+        settings.state = 0; #timer is not active
+        _resetTimer() #reset the timer
+        $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
+        $('#main-tab-container a[href="#pantry"]').tab('show');#return to pantry tab
 
-      #update pantry
-      selector = $("tr.task#"+taskid)
-      selector.find(".count-actual").text(actual)
-      if completed == true
-        selector.find(".start").addClass("disabled")
-        selector.find(".edit").addClass("disabled")
-        selector.find(".efficiency").text(Math.round(current.estimated/actual*100)+"%")
+        #update pantry
+        selector = $("tr.task#"+taskid)
+        selector.find(".count-actual").text(actual)
+        if completed == true
+          selector.find(".start").addClass("disabled")
+          selector.find(".edit").addClass("disabled")
+          selector.find(".efficiency").text(Math.round(current.estimated/actual*100)+"%")
   )
 
 #edit a task name or estimated pomodoros
@@ -171,12 +169,18 @@ editTask = (taskid,taskname,estimated) ->
       $("tr#"+taskid+" .estimated").text(estimated);
   )
 
+
+
+  ###
+  BIND BUTTON EVENTS
+  ###
+
 #bind the start, stop, complete buttons
 bindTimerControls = () ->
   #button definitions
   startButton ='<button type="button" id="start-pomodoro" class="btn btn-success">Start Pomodoro</button>'
   stopButton = '<button type="button" id="stop-pomodoro" class="btn btn-danger">Stop Pomodoro</button>'
-  doneButton = '<button type="button" id="task-complete" class="btn btn-primary disabled">Mark Task as Complete</button>' #disable until one pomodoro
+  doneButton = '<button type="button" id="task-complete" class="btn btn-primary ">Mark Task as Complete</button>' #disable until one pomodoro (experimenting w/ enabled)
 
   #bind start button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#start-pomodoro', ()->
@@ -193,21 +197,21 @@ bindTimerControls = () ->
       $("#timer-controls").html(stopButton)
     else
       $("#timer-controls").html(stopButton + doneButton)
-      if current.actual !=0 #allow completion if more than 1 pomodoro elapsed
+      if current.actual >0 #allow completion if more than 1 pomodoro elapsed
           $("#task-complete").removeClass('disabled')
   )
 
   #bind stop button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#stop-pomodoro', ()->
     if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
-      updateStatus(current.taskid,current.elapsed,false)
+      updateStatus(current.taskid,current.elapsed,false,false)
       $("#timer-controls").html(startButton)
   )
 
   #bind task complete button to parent and make it non-instance exclusive
   $("#timer-controls").on('click','#task-complete', ()->
       #completeTask(current.taskid,current.elapsed)
-      updateStatus(current.taskid,current.elapsed,true)
+      updateStatus(current.taskid,current.elapsed,true,false)
       $("#timer-controls").html(startButton)
   )
 
@@ -216,7 +220,7 @@ bindTimerControls = () ->
     e.preventDefault() #prevent link from triggering
     if settings.state != 0 #timer is currently active
       if confirm("If you stop now, you will not get credit for your current pomodoro cycle.")
-        updateStatus(current.taskid,current.elapsed,false)
+        updateStatus(current.taskid,current.elapsed,false,false)
         $("#timer-controls").html(startButton)
     _resetTimer() #reset timer
     _reset(current.taskid) #remove active task
@@ -251,6 +255,7 @@ bindPantry = () ->
     #timer visual elements
     $("#cancel-task").text("(Cancel)");
     $("#current-task").text(current.taskname); #set the current task
+    $("#elapsed").text(current.actual); #set current elapsed
     $('#main-tab-container a[href="#timer"]').tab('show'); #switch to timer tab
     $(this).addClass("disabled");
 
@@ -279,8 +284,8 @@ bindPantry = () ->
     else $("#create-task").addClass("disabled")
   )
 
-###PromptYesNo(text) ->
-  #creates a yes/no modal prompt
+###
+  MISC HELPER FUNCTIONS
 ###
 
 #advance the pomodoro timer to the next state
@@ -294,7 +299,7 @@ _advancePomodoro = () ->
     #state=0
     #settings.state=0
     #$("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
-    #updateStatus(current.taskid,current.elapsed,false)
+    #updateStatus(current.taskid,current.elapsed,false,false)
 
     #start another pomodoro
     settings.state=0
@@ -304,7 +309,8 @@ _advancePomodoro = () ->
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
       current.elapsed +=1 #update pomodoros elapsed counter
-      $("#elapsed").text(current.elapsed)
+      updateStatus(current.taskid,current.elapsed,false,true) #save data
+      $("#elapsed").text(current.elapsed+current.actual)
       $.playSound("/sound/timer-alarm.mp3")
       $("#pomodoro-timer").css('background-color','#2ecc71') #change timer background to green
 
@@ -348,6 +354,7 @@ _resetTimer = () ->
 _reset = (taskid) ->
   sel = $("#pantry-table tr#"+taskid)
   sel.find("td.actions .start").removeClass("disabled")
+  sel.find("td.actions .edit").removeClass("disabled")
   #reset the current task variable
   current.elapsed=0;
   current.taskid=0;
