@@ -91,7 +91,7 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <p>Each pomodoro is 25 minutes in length. A pomodoro cycle consists of
+                            <p>Each pomodoro is 25 minutes in length. A pomodoro cycle consists of:
                             <ul>
                                 <li>3x 25 minute pomodoros with a short break (5 mins) after each.</li>
                                 <li>1x 25 minute pomodoro with a long break (30 mins).</li>

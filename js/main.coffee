@@ -118,7 +118,7 @@ loadTasks = () ->
         if parseInt(i.actual) == 0
           i.actual = '-'
         if i.completed&1 == 1 #convert from string to integer
-          efficiency = Math.round(estimated/actual*100)+"%"
+          efficiency = Math.round(i.estimated/ i.actual*100)+"%"
         $("#pantry-table").append('<tr id="'+i.task_id+'" class="task"><td class="taskname">'+ i.task_name+'</td><td class="estimated">'+i.estimated+'</td><td class="count-actual">'+i.actual+'</td><td class="efficiency">'+efficiency+'</td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
         if i.completed&1 == 1 #disable buttons if task is completed
           $("tr.task#"+i.task_id+" .start").addClass("disabled")
@@ -137,7 +137,7 @@ updateStatus = (taskid,actual,completed) ->
     data:
       id: taskid
       a: actual
-      c: completed
+      c: completed&1
     dataType: 'json', #data format
     success: (data) ->  #refresh stats on success
       $("tr.task#"+current.taskid).find(".start").removeClass("disabled")#enable the start button again
@@ -191,7 +191,10 @@ bindTimerControls = () ->
     $("#timer-controls").text('')
     if current.taskname == "" #no task is active - don't show task completed button
       $("#timer-controls").html(stopButton)
-    else $("#timer-controls").html(stopButton + doneButton)
+    else
+      $("#timer-controls").html(stopButton + doneButton)
+      if current.actual !=0 #allow completion if more than 1 pomodoro elapsed
+          $("#task-complete").removeClass('disabled')
   )
 
   #bind stop button to parent and make it non-instance exclusive
@@ -217,6 +220,7 @@ bindTimerControls = () ->
         $("#timer-controls").html(startButton)
     _resetTimer() #reset timer
     _reset(current.taskid) #remove active task
+    $('#main-tab-container a[href="#pantry"]').tab('show');#return to pantry tab
   )
 
 
