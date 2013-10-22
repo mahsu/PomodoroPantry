@@ -1,8 +1,6 @@
-#@TODO rename all occurrances of efficiency with accuracy
-
 settings =
-  pomo: 25 #length of a pomodoro
-  shortbreak: 5 #length of a short break
+  pomo: 1 #length of a pomodoro
+  shortbreak: 1 #length of a short break
   longbreak: 30 #length of a long break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
 
@@ -116,6 +114,8 @@ loadTasks = () ->
           i.actual = '-'
         if i.completed&1 == 1 #convert from string to integer
           efficiency = Math.round(i.estimated/ i.actual*100)+"%"
+          if !isFinite(efficiency) #is efficiency is inf or NaN
+            efficiency = '100%'
         $("#pantry-table").append('<tr id="'+i.task_id+'" class="task"><td class="taskname">'+ i.task_name+'</td><td class="estimated">'+i.estimated+'</td><td class="count-actual">'+i.actual+'</td><td class="efficiency">'+efficiency+'</td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
         if i.completed&1 == 1 #disable buttons if task is completed
           $("tr.task#"+i.task_id+" .start").addClass("disabled")
@@ -150,7 +150,10 @@ updateStatus = (taskid,actual,completed,backgroundUpdate) ->
         if completed == true
           selector.find(".start").addClass("disabled")
           selector.find(".edit").addClass("disabled")
-          selector.find(".efficiency").text(Math.round(current.estimated/actual*100)+"%")
+          efficiency = Math.round(current.estimated/actual*100)+"%"
+          if !(isFinite(efficiency))
+            efficiency = '100%'
+          selector.find(".efficiency").text(efficiency)
   )
 
 #edit a task name or estimated pomodoros
@@ -303,15 +306,15 @@ _advancePomodoro = () ->
 
     #start another pomodoro
     settings.state=0
-    $.playSound("/sound/break-alarm.mp3")
+    $("#break-alarm")[0].play();
     addTime = settings.pomo
     $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to red
   else
     if state % 2 == 1 #next state is break, pomodoro just finished
       current.elapsed +=1 #update pomodoros elapsed counter
       updateStatus(current.taskid,current.elapsed,false,true) #save data
-      $("#elapsed").text(current.elapsed+current.actual)
-      $.playSound("/sound/timer-alarm.mp3")
+      $("#elapsed").text(current.elapsed+current.actual) #keep a running count
+      $("#timer-alarm")[0].play();
       $("#pomodoro-timer").css('background-color','#2ecc71') #change timer background to green
 
       if state == 7 #long break
@@ -320,7 +323,7 @@ _advancePomodoro = () ->
         addTime = settings.shortbreak
     else
       #start another pomodoro
-      $.playSound("/sound/break-alarm.mp3")
+      $("#break-alarm")[0].play();
       addTime = settings.pomo
       $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to red
 

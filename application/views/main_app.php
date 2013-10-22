@@ -20,7 +20,7 @@
                                 <th>Task</th>
                                 <th>Est. Pomodoros</th>
                                 <th>Actual Pomodoros</th>
-                                <th>Accuracy</th>
+                                <th>Efficiency</th>
                                 <th>Actions</th>
                             </tr>
                         </table>
@@ -102,6 +102,7 @@
                         <div class="col-md-6">
                             <h4>Tracking a Task</h4>
                             <p>Start a task from the pantry tab to keep track of your progress.</p>
+                            <p>Keep the timer open in its own window. Chrome freezes javascript on inactive tabs but not on minimized windows.</p>
                         </div>
                     </div>
                 </div>
@@ -173,3 +174,6 @@ The Pomodoro Technique® and Pomodoro™ are registered trademarks by Francesco 
     </div>
     <!-- /.modal -->
 </div>
+
+<audio id="break-alarm"><source src="/sound/break-alarm.mp3" type="audio/mpeg"></audio>
+<audio id="timer-alarm"><source src="/sound/timer-alarm.mp3" type="audio/mpeg"></audio>

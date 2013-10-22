@@ -33,5 +33,5 @@
     <!--js that are not part of bootstrap-->
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script src="/js/jquery.countdown.min.js"></script>
-    <script src="/js/jquery.playsound.min.js"></script>
+
 </head>
