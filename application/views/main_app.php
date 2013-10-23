@@ -17,7 +17,7 @@
                     <div class="row">
                         <table class="table table-striped" id="pantry-table">
                             <tr>
-                                <th>Task</th>
+                                <th class="taskname">Task</th>
                                 <th>Est. Pomodoros</th>
                                 <th>Actual Pomodoros</th>
                                 <th>Efficiency</th>

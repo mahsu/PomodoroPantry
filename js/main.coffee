@@ -1,6 +1,6 @@
 settings =
-  pomo: 1 #length of a pomodoro
-  shortbreak: 1 #length of a short break
+  pomo: 25 #length of a pomodoro
+  shortbreak: 5 #length of a short break
   longbreak: 30 #length of a long break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
 
@@ -110,12 +110,14 @@ loadTasks = () ->
       for i in data
         efficiency = '-' #do not calculate efficiency unless task is complete
         #determine if task is complete
-        if parseInt(i.actual) == 0
-          i.actual = '-'
+        if parseInt(i.actual) == 0 #only disallow 0 if not complete, allow if task is complete
+          if parseInt(i.completed) == 0 #task not complete
+            i.actual = '-'
         if i.completed&1 == 1 #convert from string to integer
-          efficiency = Math.round(i.estimated/ i.actual*100)+"%"
-          if !isFinite(efficiency) #is efficiency is inf or NaN
+          efficiency = Math.round(i.estimated/ i.actual*100)
+          if isFinite(efficiency) == false #is efficiency is inf or NaN
             efficiency = '100%'
+          else efficiency = efficiency + "%" #add the percent
         $("#pantry-table").append('<tr id="'+i.task_id+'" class="task"><td class="taskname">'+ i.task_name+'</td><td class="estimated">'+i.estimated+'</td><td class="count-actual">'+i.actual+'</td><td class="efficiency">'+efficiency+'</td><td class="actions"><button type="button" class="start btn btn-success">Start</button><button type="button" class="edit btn btn-warning">Edit</button><button type="button" class="delete btn btn-danger">Delete</button></td></tr>') #add the task to the table
         if i.completed&1 == 1 #disable buttons if task is completed
           $("tr.task#"+i.task_id+" .start").addClass("disabled")
@@ -142,7 +144,8 @@ updateStatus = (taskid,actual,completed,backgroundUpdate) ->
         settings.state = 0; #timer is not active
         _resetTimer() #reset the timer
         $("#pomodoro-timer").css("background-color","#e74c3c"); #change timer background to inactive
-        $('#main-tab-container a[href="#pantry"]').tab('show');#return to pantry tab
+        if taskid != 0 #only change tabs if no task is active
+          $('#main-tab-container a[href="#pantry"]').tab('show');#return to pantry tab
 
         #update pantry
         selector = $("tr.task#"+taskid)
@@ -150,9 +153,10 @@ updateStatus = (taskid,actual,completed,backgroundUpdate) ->
         if completed == true
           selector.find(".start").addClass("disabled")
           selector.find(".edit").addClass("disabled")
-          efficiency = Math.round(current.estimated/actual*100)+"%"
+          efficiency = Math.round(current.estimated/actual*100)
           if !(isFinite(efficiency))
             efficiency = '100%'
+          else efficiency = efficiency + "%"
           selector.find(".efficiency").text(efficiency)
   )
 
@@ -256,7 +260,7 @@ bindPantry = () ->
       current.actual=0
 
     #timer visual elements
-    $("#cancel-task").text("(Cancel)");
+    $("#cancel-task").text("(cancel)");
     $("#current-task").text(current.taskname); #set the current task
     $("#elapsed").text(current.actual); #set current elapsed
     $('#main-tab-container a[href="#timer"]').tab('show'); #switch to timer tab
