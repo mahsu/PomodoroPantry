@@ -107,7 +107,8 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="stats">
-                    <p>Coming soon!</p>
+                    <div>Total Tasks Completed: <span id="stat-total">0</span></div>
+                    <div>Total Pomodoros Elapsed: <span id="stat-actual">0</span></div>
                 </div>
                 <div class="tab-pane fade" id="about">
                     <br/>

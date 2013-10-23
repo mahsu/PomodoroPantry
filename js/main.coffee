@@ -3,6 +3,9 @@ settings =
   shortbreak: 5 #length of a short break
   longbreak: 30 #length of a long break
   state: 0 #step of the pomodoro process (0=pause, 1,3,5,7 = pomodoro; 2,4,6,8 = break; 8 = long break)
+  total: 0 # total number of tasks
+  totTEstimated: 0 #total estimated pomodoros
+  totActual: 0 #total actual pomodoros
 
 current =
   taskid: 0 #id of task
@@ -23,6 +26,10 @@ $(document).ready(()->
   #load all tasks
   loadTasks()
 
+  #bind edit modal event handlers
+  bindModal()
+
+
   #setup ajax defaults
   $.ajaxSetup(
     error: (jqXHR, exception) ->
@@ -42,26 +49,7 @@ $(document).ready(()->
         _connectionError('Unexpected Error.\n' + jqXHR.responseText);
   );
 
-  #bind modal close event
-  $("#modal-edit").on("hide.bs.modal", () ->
-    $("#modal-edit-id").val('');
-    $("#modal-edit-name").val(1)
-    $("#modal-edit-numberpomodoros").val('')
-    $("#modal-edit-btn-save").removeClass("disabled")
-  )
 
-  #enable/disable the save changes button
-  $("#modal-edit-name").keyup( ()->
-    if $(this).val() != ""
-      $("#modal-edit-btn-save").removeClass("disabled")
-    else $("#modal-edit-btn-save").addClass("disabled")
-  )
-
-  #save button event handler
-  $("#modal-edit-btn-save").click( ()->
-    #save the editted task
-    editTask($("#modal-edit-id").val(),$("#modal-edit-name").val(),$("#modal-edit-numberpomodoros").val())
-  )
 )
 
 
@@ -289,6 +277,30 @@ bindPantry = () ->
     if $(this).val() != ""
       $("#create-task").removeClass("disabled")
     else $("#create-task").addClass("disabled")
+  )
+
+
+#bind modal event handlers
+bindModal = () ->
+  #bind modal close event
+  $("#modal-edit").on("hide.bs.modal", () ->
+    $("#modal-edit-id").val('');
+    $("#modal-edit-name").val(1)
+    $("#modal-edit-numberpomodoros").val('')
+    $("#modal-edit-btn-save").removeClass("disabled")
+  )
+
+  #enable/disable the save changes button
+  $("#modal-edit-name").keyup( ()->
+    if $(this).val() != ""
+      $("#modal-edit-btn-save").removeClass("disabled")
+    else $("#modal-edit-btn-save").addClass("disabled")
+  )
+
+  #save button event handler
+  $("#modal-edit-btn-save").click( ()->
+    #save the editted task
+    editTask($("#modal-edit-id").val(),$("#modal-edit-name").val(),$("#modal-edit-numberpomodoros").val())
   )
 
 ###

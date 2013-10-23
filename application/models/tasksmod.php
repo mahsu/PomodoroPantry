@@ -33,14 +33,25 @@ class Tasksmod extends CI_Model
      * @param $user_id
      */
     public function loadAllTasks($user_id) {
+            //get all tasks
+            $output = array();
             $this->db->select(array("task_id", "task_name", "date", "estimated", "actual", "completed"))->where('user_id', $user_id);
             $query = $this->db->get('tasks');
             if ($query->num_rows() > 0) {
                 foreach ($query->result_array() as $row)
                     $data[] = $row;
-                return $data;
+                $output['tasks'] = $data;
             }
-        else return false;
+
+            //query for statistics
+            $query = $this->db->select(array('numcompleted','numactual'))->where('id',$user_id)->get('users');
+            if ($query->num_rows() > 0) {
+                foreach ($query->result_array() as $row){
+                    $output['completed'] = $row['numcompleted'];
+                    $output['actual'] = $row['numactual'];
+                }
+                return $output; //return tasks and stats
+            }
     }
 
     /**
@@ -65,7 +76,6 @@ class Tasksmod extends CI_Model
      */
     public function updateTask($user_id,$task_id,$task_name,$estimated){
         $this->db->update('tasks',array('task_name'=>$task_name,'estimated'=>$estimated),array('user_id'=>$user_id,'task_id'=>$task_id));
-        return true;
     }
 
     /**
@@ -75,7 +85,32 @@ class Tasksmod extends CI_Model
      */
     public function updateStatus($user_id,$task_id,$actual,$completed){
         $this->db->update('tasks',array('actual'=>$actual,'completed'=>$completed),array('user_id'=>$user_id,'task_id'=>$task_id));
+        if ($completed == true)
+            $this->updateTotals($user_id,$actual);
         return true;
     }
+
+
+    /**
+     * update total statistics
+     * @param $user_id
+     * @param $actual           actual to add to total
+     * @param $estimated        estimated to add to total
+     */
+    private function updateTotals($user_id,$actual) {
+        $query = $this->db->select(array('numcompleted,numactual'))->where('id',$user_id)->get('users');
+        if ($query->num_rows > 0) {
+            foreach ($query->result_array() as $row)
+            {
+                $numcompleted = $row['numcompleted'] + 1;
+                //$numestimated =  $row['numestimated'] + $estimated;
+                $numactual = $row['numactual'] + $actual;
+                $this->db->update('users',array('numcompleted'=>$numcompleted,'numactual'=>$numactual),array('user_id'=>$user_id));
+                return true;
+            }
+        }
+        else return false;
+    }
+
 
 }
